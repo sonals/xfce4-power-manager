@@ -46,6 +46,7 @@
 #include "xfpm-console-kit.h"
 #include "xfpm-button.h"
 #include "xfpm-backlight.h"
+#include "xfpm-kbd-backlight.h"
 #include "xfpm-inhibit.h"
 #include "egg-idletime.h"
 #include "xfpm-config.h"
@@ -74,25 +75,26 @@ struct XfpmManagerPrivate
 {
     DBusGConnection *session_bus;
 
-    XfceSMClient    *client;
+    XfceSMClient       *client;
 
-    XfpmPower       *power;
-    XfpmButton      *button;
-    XfpmXfconf      *conf;
-    XfpmBacklight   *backlight;
-    XfpmConsoleKit  *console;
-    XfpmDBusMonitor *monitor;
-    XfpmDisks       *disks;
-    XfpmInhibit     *inhibit;
-    EggIdletime     *idle;
+    XfpmPower          *power;
+    XfpmButton         *button;
+    XfpmXfconf         *conf;
+    XfpmBacklight      *backlight;
+    XfpmKbdBacklight   *kbd_backlight;
+    XfpmConsoleKit     *console;
+    XfpmDBusMonitor    *monitor;
+    XfpmDisks          *disks;
+    XfpmInhibit        *inhibit;
+    EggIdletime        *idle;
 #ifdef HAVE_DPMS
-    XfpmDpms        *dpms;
+    XfpmDpms           *dpms;
 #endif
 
-    GTimer	    *timer;
+    GTimer	       *timer;
 
-    gboolean	     inhibited;
-    gboolean	     session_managed;
+    gboolean	        inhibited;
+    gboolean	        session_managed;
 };
 
 G_DEFINE_TYPE (XfpmManager, xfpm_manager, G_TYPE_OBJECT)
@@ -144,6 +146,8 @@ xfpm_manager_finalize (GObject *object)
 #endif
 
     g_object_unref (manager->priv->backlight);
+
+    g_object_unref (manager->priv->kbd_backlight);
 
     G_OBJECT_CLASS (xfpm_manager_parent_class)->finalize (object);
 }
@@ -259,6 +263,9 @@ xfpm_manager_button_pressed_cb (XfpmButton *bt, XfpmButtonKey type, XfpmManager 
     XFPM_DEBUG_ENUM (type, XFPM_TYPE_BUTTON_KEY, "Received button press event");
 
     if ( type == BUTTON_MON_BRIGHTNESS_DOWN || type == BUTTON_MON_BRIGHTNESS_UP )
+        return;
+
+    if ( type == BUTTON_KBD_BRIGHTNESS_DOWN || type == BUTTON_KBD_BRIGHTNESS_UP )
         return;
 
     if ( type == BUTTON_POWER_OFF )
@@ -545,6 +552,8 @@ void xfpm_manager_start (XfpmManager *manager)
 		      G_CALLBACK (xfpm_manager_system_bus_connection_changed_cb), manager);
 
     manager->priv->backlight = xfpm_backlight_new ();
+
+    manager->priv->kbd_backlight = xfpm_kbd_backlight_new ();
 
 #ifdef HAVE_DPMS
     manager->priv->dpms = xfpm_dpms_new ();
