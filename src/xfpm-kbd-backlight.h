@@ -33,22 +33,22 @@ typedef struct XfpmKbdBacklightPrivate XfpmKbdBacklightPrivate;
 
 typedef struct
 {
-    GObject         		parent;
+    GObject                     parent;
     XfpmKbdBacklightPrivate    *priv;
-    
+
 } XfpmKbdBacklight;
 
 typedef struct
 {
-    GObjectClass 		parent_class;
-    
+    GObjectClass                parent_class;
+
 } XfpmKbdBacklightClass;
 
-GType        			xfpm_kbd_backlight_get_type         (void) G_GNUC_CONST;
+GType                           xfpm_kbd_backlight_get_type         (void) G_GNUC_CONST;
 
-XfpmKbdBacklight       	       *xfpm_kbd_backlight_new              (void);
+XfpmKbdBacklight               *xfpm_kbd_backlight_new              (void);
 
-gboolean			xfpm_kbd_backlight_has_hw	    (XfpmKbdBacklight *backlight);
+gboolean                        xfpm_kbd_backlight_has_hw           (XfpmKbdBacklight *backlight);
 
 G_END_DECLS
 

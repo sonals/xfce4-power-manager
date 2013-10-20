@@ -73,7 +73,7 @@ static gboolean xfpm_manager_quit (XfpmManager *manager);
 
 struct XfpmManagerPrivate
 {
-    DBusGConnection *session_bus;
+    DBusGConnection    *session_bus;
 
     XfceSMClient       *client;
 
@@ -91,10 +91,10 @@ struct XfpmManagerPrivate
     XfpmDpms           *dpms;
 #endif
 
-    GTimer	       *timer;
+    GTimer             *timer;
 
-    gboolean	        inhibited;
-    gboolean	        session_managed;
+    gboolean            inhibited;
+    gboolean            session_managed;
 };
 
 G_DEFINE_TYPE (XfpmManager, xfpm_manager, G_TYPE_OBJECT)
